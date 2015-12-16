@@ -1,20 +1,7 @@
 package signatures;
 
-public abstract class Key {
-    Object material;
-    boolean isUsed;
+import hashing.Hashable;
 
-    public Key(Object material) {
-	this.isUsed = false;
-	this.material = material;
-    }
+public interface Key extends Hashable {
 
-    public Object getMaterial() {
-	this.isUsed = true;
-	return this.material;
-    }
-
-    public boolean isUsed() {
-	return this.isUsed;
-    }
 }

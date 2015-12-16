@@ -1,6 +1,6 @@
 package hashing;
 
-public class HashFunctionSha512 implements HashFunction {
+public class HashFunctionSha512 extends HashFunction {
     public final int bitLength = 512;
 
     @Override
@@ -9,7 +9,8 @@ public class HashFunctionSha512 implements HashFunction {
     }
 
     @Override
-    public Hash hash(String message) {
-	return new Hash(org.apache.commons.codec.digest.DigestUtils.sha512(message));
+    public Hash hash(byte[] data) {
+	return new Hash(org.apache.commons.codec.digest.DigestUtils.sha512(data));
     }
+
 }

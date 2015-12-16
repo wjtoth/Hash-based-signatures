@@ -1,19 +1,19 @@
 package signatures;
 
 public class KeyPair {
-	PublicKey publicKey;
-	PrivateKey privateKey;
-	
-	public KeyPair(PublicKey publicKey, PrivateKey privateKey) {
-		this.publicKey = publicKey;
-		this.privateKey = privateKey;
-	}
-	
-	PublicKey getPublicKey() {
-		return publicKey;
-	}
-	
-	PrivateKey getPrivateKey() {
-		return privateKey;
-	}
+    PublicKey publicKey;
+    PrivateKey privateKey;
+
+    public KeyPair(PublicKey publicKey, PrivateKey privateKey) {
+	this.publicKey = publicKey;
+	this.privateKey = privateKey;
+    }
+
+    public PrivateKey getPrivateKey() {
+	return this.privateKey;
+    }
+
+    public PublicKey getPublicKey() {
+	return this.publicKey;
+    }
 }

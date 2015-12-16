@@ -1,5 +1,5 @@
 package signatures;
 
 public interface KeyGenerator {
-	KeyPair generateKeys();
+    KeyPair generateKeys() throws Exception;
 }

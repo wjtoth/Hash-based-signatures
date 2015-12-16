@@ -1,13 +1,6 @@
 package signatures;
 
-public abstract class Signature {
-    Object material;
+import hashing.Hashable;
 
-    public Signature(Object material) {
-	this.material = material;
-    }
-
-    public Object getMaterial() {
-	return this.material;
-    }
+public interface Signature extends Hashable {
 }
