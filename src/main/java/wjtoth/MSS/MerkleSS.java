@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import hashing.Hash;
 import hashing.HashFunction;
+import signatures.KeyPair;
 import signatures.PrivateKey;
 import signatures.PublicKey;
 import signatures.Signature;
@@ -16,21 +17,21 @@ public class MerkleSS {
 	Stack<MerkleNode> stack;
 	int maxheight;
 	int leaf;
-	int index;
 
-	public TreeHashStack(int start, int maxheight, int index) {
+	public TreeHashStack(int start, int maxheight) {
 	    this.leaf = start;
 	    this.maxheight = maxheight;
 	    this.stack = new Stack<MerkleNode>();
-	    this.index = index;
 	}
 
 	private int consolidate(MerkleNode stackRight, MerkleNode stackLeft) {
 	    final Hash parentHash = MerkleSS.this.hashFunction.hash(stackLeft.getHash().concat(stackRight.getHash()));
 	    final int parentHeight = stackRight.getHeight() + 1;
+	    System.out.println("maxheight " + this.maxheight);
 	    // found auth node
 	    if (parentHeight == this.maxheight) {
-		MerkleSS.this.auth[this.index] = parentHash;
+		System.out.println("Compute parent hash of height " + parentHeight);
+		MerkleSS.this.auth[parentHeight] = parentHash;
 		return 0;
 	    }
 	    this.stack.push(new MerkleNode(parentHash, parentHeight));
@@ -40,7 +41,7 @@ public class MerkleSS {
 	private int newLeaf(int height) {
 	    this.stack.push(new MerkleNode(MerkleSS.this.leafCalc(this.leaf), height));
 	    ++this.leaf;
-	    return 0;
+	    return 1;
 	}
 
 	private int operate() {
@@ -60,6 +61,10 @@ public class MerkleSS {
 		final int height = this.stack.size() == 1 ? this.stack.peek().getHeight() : 0;
 		return this.newLeaf(height);
 	    }
+	}
+
+	public void push(MerkleNode merkleNode) {
+	    this.stack.push(merkleNode);
 	}
 
 	public Hash top() {
@@ -98,6 +103,9 @@ public class MerkleSS {
 	this.leaf = 0;
 	this.numberOfLeaves = (int) Math.pow(2, height);
 	this.stacks = new ArrayList<TreeHashStack>(this.height);
+	for (int i = 0; i < height; ++i) {
+	    this.stacks.add(new TreeHashStack(0, i));
+	}
 	this.auth = new Hash[height];
 	this.signingKeys = new PrivateKey[this.numberOfLeaves];
 	this.verificationKeys = new PublicKey[this.numberOfLeaves];
@@ -109,8 +117,32 @@ public class MerkleSS {
 	}
     }
 
-    public PublicKey generatePublicKey() {
-	return null;
+    public PublicKey generatePublicKey() throws Exception {
+	for (int i = 0; i < this.numberOfLeaves; ++i) {
+	    final KeyPair keyPair = this.signatureScheme.generateKeys();
+	    this.signingKeys[i] = keyPair.getPrivateKey();
+	    this.verificationKeys[i] = keyPair.getPublicKey();
+	}
+	// TODO not sure if this is correct
+	final Stack<MerkleNode> stack = new Stack<MerkleNode>();
+	int maxHeightReached = -1;
+	for (int j = 0; j < this.numberOfLeaves; ++j) {
+	    MerkleNode node1 = new MerkleNode(this.leafCalc(j), 0);
+	    while (!stack.empty() && (stack.peek().getHeight() == node1.getHeight())) {
+		final MerkleNode node2 = stack.pop();
+		final int h = node1.getHeight();
+		if (h > maxHeightReached) {
+		    System.out.println("h VALUE " + h);
+		    this.stacks.get(h).push(node2);
+		    this.auth[h] = node1.getHash();
+		    ++maxHeightReached;
+		}
+		node1 = new MerkleNode(this.hashFunction.hash(node2.getHash().concat(node1.getHash())), h + 1);
+	    }
+	    stack.push(node1);
+	}
+	final Hash root = stack.pop().getHash();
+	return new PublicKeyMerkle(root);
     }
 
     private Hash leafCalc(int leaf) {
@@ -124,21 +156,27 @@ public class MerkleSS {
 		this.auth[h] = this.stacks.get(h).top();
 		// TODO not sure about this
 		final int startnode = (this.leaf + 1 + hPower) ^ hPower;
-		this.stacks.set(h, new TreeHashStack(startnode, h, h));
+		this.stacks.set(h, new TreeHashStack(startnode, h));
 	    }
 	}
     }
 
-    // TODO implement
-    public Signature sign() throws Exception {
+    public Signature sign(String message) throws Exception {
 	if (this.leaf >= this.numberOfLeaves) {
 	    throw new Exception("out of signing leaves");
 	}
-	// sig' = signatureScheme.sign(leaf)
-	// sig = new MerkleSignature(sig', leafCalc(leaf), auth)
-	// traverseTree
-	// return sig
-	return null;
+	final Signature sig1 = this.signatureScheme.sign(message, this.signingKeys[this.leaf]);
+	for (int i = 0; i < this.height; ++i) {
+	    System.out.println("index " + i);
+	    System.out.println(this.auth[i]);
+	}
+	final Hash[] A = new Hash[this.height];
+	for (int i = 0; i < this.height; ++i) {
+	    A[i] = this.auth[i];
+	}
+	final Signature sig = new SignatureMerkle(sig1, this.verificationKeys[this.leaf], A);
+	this.traverseTree();
+	return sig;
     }
 
     private void traverseTree() {
