@@ -1,5 +1,7 @@
 package wjtoth.MSS;
 
+import java.util.BitSet;
+
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -31,5 +33,15 @@ public class AppTest extends TestCase {
      */
     public void testApp() {
 	Assert.assertTrue(true);
+	final BitSet bitSet = new BitSet(512);
+	System.out.println(bitSet.length());
+	System.out.println(bitSet.size());
+	final BitSet word = BitSet.valueOf("helloworld".getBytes());
+	System.out.println(word.length());
+	System.out.println(word.size());
+	bitSet.or(word);
+	System.out.println(bitSet.length());
+	System.out.println(bitSet.size());
+	System.out.println(new String(bitSet.toByteArray()));
     }
 }

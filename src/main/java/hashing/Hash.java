@@ -2,7 +2,7 @@ package hashing;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-public class Hash {
+public class Hash implements Hashable {
     private final byte[] data;
 
     public Hash(byte[] data) {
@@ -27,5 +27,10 @@ public class Hash {
 
     public byte[] getData() {
 	return this.data;
+    }
+
+    @Override
+    public byte[] toByteArray() {
+	return this.getData();
     }
 }
