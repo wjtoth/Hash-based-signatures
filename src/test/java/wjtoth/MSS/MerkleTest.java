@@ -38,14 +38,16 @@ public class MerkleTest extends TestCase {
 	final Verifier verifier = new VerifierLamport(hashFunction, hashFunction.getBitLength());
 	final SignatureScheme signatureScheme = new SignatureScheme(keyGenerator, signer, verifier);
 
-	final MerkleSS merkleSS = new MerkleSS(hashFunction, signatureScheme, 2);
+	final MerkleSS merkleSS = new MerkleSSClassical(hashFunction, signatureScheme, 4);
 	final PublicKey publicKey = merkleSS.generatePublicKey();
+	for (int i = 0; i < (int) Math.pow(2, 4); ++i) {
 
-	final Signature signature = merkleSS.sign("HelloWorld");
+	    final Signature signature = merkleSS.sign("HelloWorld");
 
-	final VerifierMerkle verifierMerkle = new VerifierMerkle(hashFunction, verifier);
+	    final VerifierMerkle verifierMerkle = new VerifierMerkle(hashFunction, verifier);
 
-	Assert.assertTrue(verifierMerkle.verify("HelloWorld", signature, publicKey));
-	Assert.assertFalse(verifierMerkle.verify("HelloNewWorld", signature, publicKey));
+	    Assert.assertTrue(verifierMerkle.verify("HelloWorld", signature, publicKey));
+	    Assert.assertFalse(verifierMerkle.verify("HelloNewWorld", signature, publicKey));
+	}
     }
 }

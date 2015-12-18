@@ -33,12 +33,19 @@ public class VerifierMerkle implements Verifier {
 	if (!this.verifier.verify(message, signatureMerkle.getSig1(), signatureMerkle.getVerificationKey())) {
 	    return false;
 	}
-	System.out.println("OTS CHECKS OUT");
+
 	Hash hash = this.h.hash(signatureMerkle.getVerificationKey());
 	final Hash[] auth = signatureMerkle.getAuth();
-	for (final Hash element : auth) {
-	    hash = this.h.hash(hash.concat(element));
+	final int s = signatureMerkle.getIndex();
+	for (int i = 0; i < auth.length; ++i) {
+	    final int heightPow = (int) Math.pow(2, i);
+	    if (((s / heightPow) % 2) == 0) {
+		hash = this.h.hash(hash.concat(auth[i]));
+	    } else {
+		hash = this.h.hash(auth[i].concat(hash.toByteArray()));
+	    }
 	}
+
 	return hash.equals(publicKeyMerkle.getRoot());
     }
 

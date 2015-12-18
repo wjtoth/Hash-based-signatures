@@ -11,15 +11,21 @@ public class SignatureMerkle implements Signature {
     Signature sig1;
     PublicKey verificationKey;
     Hash[] auth;
+    int index;
 
-    public SignatureMerkle(Signature sig1, PublicKey verificationKey, Hash[] auth) {
+    public SignatureMerkle(Signature sig1, PublicKey verificationKey, Hash[] auth, int index) {
 	this.sig1 = sig1;
 	this.verificationKey = verificationKey;
 	this.auth = auth;
+	this.index = index;
     }
 
     public Hash[] getAuth() {
 	return this.auth;
+    }
+
+    public int getIndex() {
+	return this.index;
     }
 
     public Signature getSig1() {
