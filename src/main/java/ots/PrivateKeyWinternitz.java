@@ -6,6 +6,13 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import signatures.PrivateKey;
 
+/**
+ * Winternitz Signing Key Structure. Consists of an array of integers. Please
+ * note that keys should only be used with a single message.
+ * 
+ * @author wjtoth
+ *
+ */
 public class PrivateKeyWinternitz implements PrivateKey {
 
     BigInteger[] x;

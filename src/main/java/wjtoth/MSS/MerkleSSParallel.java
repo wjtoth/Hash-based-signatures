@@ -5,6 +5,12 @@ import com.tantaman.commons.concurrent.Parallel;
 import hashing.HashFunction;
 import signatures.SignatureScheme;
 
+/**
+ * A parallelized version of the MerkleSSClassical tree traversal.
+ * 
+ * @author wjtoth
+ *
+ */
 public class MerkleSSParallel extends MerkleSS {
     public MerkleSSParallel(HashFunction hashFunction, SignatureScheme signatureScheme, int height) {
 	super(hashFunction, signatureScheme, height);

@@ -3,6 +3,13 @@ package wjtoth.MSS;
 import hashing.Hash;
 import signatures.PublicKey;
 
+/**
+ * Structure of Merkle Tree public key. Consists of the Hash value of the tree
+ * root.
+ * 
+ * @author wjtoth
+ *
+ */
 public class PublicKeyMerkle implements PublicKey {
     private final Hash root;
 

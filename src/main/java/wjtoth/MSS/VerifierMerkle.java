@@ -6,6 +6,16 @@ import signatures.PublicKey;
 import signatures.Signature;
 import signatures.Verifier;
 
+/**
+ * Verifier used to verify Merkle Tree signatures. It first checks that the One
+ * Time Signature of the message provided is authentic. Then it uses the
+ * authentication path of hashes provided to compute the merkle root (given as
+ * the public key). It verifies that the root computed is as expected in order
+ * to authenticate the message.
+ * 
+ * @author wjtoth
+ *
+ */
 public class VerifierMerkle implements Verifier {
 
     private final HashFunction h;

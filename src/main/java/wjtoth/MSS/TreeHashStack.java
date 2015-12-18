@@ -5,6 +5,18 @@ import java.util.Stack;
 import hashing.Hash;
 import hashing.HashFunction;
 
+/**
+ * This data structure is used to simulate the common treehash algorithm of the
+ * literature. consolidate and newLeaf represent the two cases of a single unit
+ * of computation of treehash. update(n) performs n units of tree hash
+ * computation. computation stops when it has found a node of maxheight. This
+ * note roots a subtree of the merkle tree for which startnode from the
+ * intialize procedure is the leftmost leaf. The node is stored at the top of
+ * the stack.
+ *
+ * @author wjtoth
+ *
+ */
 public class TreeHashStack {
     Stack<MerkleNode> stack;
     int maxheight;
@@ -13,6 +25,17 @@ public class TreeHashStack {
     HashFunction hashFunction;
     LeafCalc leafCalc;
 
+    /**
+     *
+     * @param start
+     *            leftmost leaf index of desired subtree
+     * @param maxheight
+     *            height of root
+     * @param hashFunction
+     *            the hash function the underlying merkle tree uses
+     * @param leafCalc
+     *            an oracle which computes leaf hash values
+     */
     public TreeHashStack(int start, int maxheight, HashFunction hashFunction, LeafCalc leafCalc) {
 	this.hashFunction = hashFunction;
 	this.leafCalc = leafCalc;
@@ -39,6 +62,12 @@ public class TreeHashStack {
 	return this;
     }
 
+    /**
+     *
+     * @return min height of a node in stack. Edge cases: if stack is empty
+     *         returns maxheight, if algorithm as already found its target
+     *         subtree root, returns "infinity" aka MAX_VALUE
+     */
     public int low() {
 	if (this.stack.isEmpty()) {
 	    return this.maxheight;

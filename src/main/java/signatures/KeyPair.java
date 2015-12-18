@@ -1,5 +1,11 @@
 package signatures;
 
+/**
+ * Structure collection a public and private key pair. Output of a KeyGenerator.
+ * 
+ * @author wjtoth
+ *
+ */
 public class KeyPair {
     PublicKey publicKey;
     PrivateKey privateKey;

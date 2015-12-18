@@ -6,6 +6,12 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import signatures.Signature;
 
+/**
+ * Lamport signature structure. Consists of an array of integers.
+ * 
+ * @author wjtoth
+ *
+ */
 public class SignatureLamport implements Signature {
 
     private final BigInteger[] sig;

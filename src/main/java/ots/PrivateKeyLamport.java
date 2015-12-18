@@ -7,7 +7,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import signatures.PrivateKey;
 
 /**
- * Please note that keys are only intended to be used once
+ * Lamport Signing Key Structure. Consists of two arrays of integers. Please
+ * note that keys are only intended to be used once
  **/
 public class PrivateKeyLamport implements PrivateKey {
 

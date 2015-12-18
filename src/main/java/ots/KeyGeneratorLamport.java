@@ -8,6 +8,13 @@ import hashing.HashFunction;
 import signatures.KeyGenerator;
 import signatures.KeyPair;
 
+/**
+ * Lamport key generator. Please do not use keys with more than one message for
+ * security.
+ * 
+ * @author wjtoth
+ *
+ */
 public class KeyGeneratorLamport implements KeyGenerator {
 
     private final HashFunction h;

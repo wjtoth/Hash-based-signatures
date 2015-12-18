@@ -5,6 +5,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import hashing.Hash;
 import signatures.PublicKey;
 
+/**
+ * Lamport Verification Key structure. Consists of two arrays of hashes. Please
+ * note that Keys should only be used with a single message.
+ * 
+ * @author wjtoth
+ *
+ */
 public class PublicKeyLamport implements PublicKey {
     Hash[] y1;
     Hash[] y2;

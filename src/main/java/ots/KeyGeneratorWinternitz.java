@@ -9,6 +9,13 @@ import signatures.KeyGenerator;
 import signatures.KeyPair;
 import wjtoth.MSS.IntMath;
 
+/**
+ * Winternitz key generator. Please do not use keys with more than one message
+ * for security.
+ *
+ * @author wjtoth
+ *
+ */
 public class KeyGeneratorWinternitz implements KeyGenerator {
 
     HashFunction h;
@@ -17,6 +24,13 @@ public class KeyGeneratorWinternitz implements KeyGenerator {
     int kwratio;
     int t;
 
+    /**
+     *
+     * @param hashFunction
+     * @param messageBitLength
+     * @param w
+     *            the Winternitz parameter
+     */
     public KeyGeneratorWinternitz(HashFunction hashFunction, int messageBitLength, int w) {
 	this.h = hashFunction;
 	this.k = messageBitLength;

@@ -5,6 +5,12 @@ import org.apache.commons.lang3.ArrayUtils;
 import hashing.Hash;
 import signatures.Signature;
 
+/**
+ * Winternitz signature structure. Consistes of an array of hashes.
+ * 
+ * @author wjtoth
+ *
+ */
 public class SignatureWinternitz implements Signature {
 
     Hash[] sig;

@@ -3,6 +3,13 @@ package wjtoth.MSS;
 import hashing.HashFunction;
 import signatures.SignatureScheme;
 
+/**
+ * An implemenation of the tree traversal algorithm given by Szydlo is
+ * "Merkle tree traversal in log space and time"
+ * 
+ * @author wjtoth
+ *
+ */
 public class MerkleSSLogarithmic extends MerkleSS {
 
     public MerkleSSLogarithmic(HashFunction hashFunction, SignatureScheme signatureScheme, int height) {

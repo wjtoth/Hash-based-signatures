@@ -7,6 +7,12 @@ import signatures.PrivateKey;
 import signatures.Signature;
 import signatures.Signer;
 
+/**
+ * Lamport signing algorithm
+ * 
+ * @author wjtoth
+ *
+ */
 public class SignerLamport implements Signer {
 
     private final int k;

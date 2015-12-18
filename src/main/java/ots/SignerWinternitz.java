@@ -9,6 +9,12 @@ import signatures.PrivateKey;
 import signatures.Signature;
 import signatures.Signer;
 
+/**
+ * Signing algorithm for Winternitz signatures.
+ * 
+ * @author wjtoth
+ *
+ */
 public class SignerWinternitz implements Signer {
 
     private final HashFunction h;
@@ -17,6 +23,13 @@ public class SignerWinternitz implements Signer {
     private final int kwratio;
     private final int t;
 
+    /**
+     *
+     * @param hashFunction
+     * @param messageBitLength
+     * @param w
+     *            the Winternitz parameter
+     */
     public SignerWinternitz(HashFunction hashFunction, int messageBitLength, int w) {
 	this.h = hashFunction;
 	this.k = messageBitLength;
@@ -37,12 +50,18 @@ public class SignerWinternitz implements Signer {
 	messageBits.or(BitSet.valueOf(messageHashBytes));
 
 	final BitSet[] b = new BitSet[this.t];
+
+	// split messages binary into w sized blocks
 	for (int i = 0; i < this.kwratio; ++i) {
 	    b[i] = new BitSet(this.w);
 	    b[i].or(messageBits.get(i * this.w, Math.min((i + 1) * this.w, messageBits.size())));
 	}
+	// compute checksum
 	final BigInteger c = WinternitzCommons.computeCheckSum(b, this.w);
+	// checksum interpreted as binary
 	final BitSet cBinary = BitSet.valueOf(c.toByteArray());
+
+	// split cBinary into w size blocks
 	for (int i = this.kwratio; i < this.t; ++i) {
 	    b[i] = new BitSet(this.w);
 	    b[i].or(cBinary.get((i - this.kwratio) * this.w,
@@ -50,6 +69,7 @@ public class SignerWinternitz implements Signer {
 	}
 
 	final Hash[] sig = new Hash[this.t];
+	// interpret blocks as integers and hash message blocks that many times
 	for (int i = 0; i < this.t; ++i) {
 	    final int bIntValue = b[i].length() > 0 ? new BigInteger(b[i].toByteArray()).intValue() : 0;
 	    sig[i] = WinternitzCommons.powerhash(privateKeyWinternitz.getX(i), this.h, bIntValue);

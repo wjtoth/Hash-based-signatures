@@ -6,7 +6,8 @@ import hashing.Hash;
  *
  * @author wjtoth
  *
- *         Stores data pertinent to a node in a Merkle tree
+ *         Stores data pertinent to a node in a Merkle tree. Consists of hash
+ *         value at node and the height of the node in the tree
  *
  */
 public class MerkleNode {

@@ -19,6 +19,13 @@ public class VerifierLamport implements Verifier {
     private final int k;
     private final HashFunction h;
 
+    /**
+     *
+     * @param hashFunction
+     * @param messageBitLength
+     *            max length of messages, should not exceed hashFunciton bit
+     *            length and optimally is equal to it
+     */
     public VerifierLamport(HashFunction hashFunction, int messageBitLength) {
 	this.k = messageBitLength;
 	this.h = hashFunction;

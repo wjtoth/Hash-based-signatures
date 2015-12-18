@@ -1,5 +1,12 @@
 package signatures;
 
+/**
+ * A structure consisting of a key generation algorithm, a signing algorithm,
+ * and a verification algorithm. They should all coincide for functionality.
+ *
+ * @author wjtoth
+ *
+ */
 public class SignatureScheme {
 
     private final KeyGenerator keyGenerator;

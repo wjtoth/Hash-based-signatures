@@ -1,8 +1,13 @@
 package wjtoth.MSS;
 
+/**
+ * A fast powering for ints and longs as well as binary log
+ * 
+ * @author wjtoth
+ *
+ */
 public class IntMath {
-    public static int binlog(int bits) // returns 0 for bits=0
-    {
+    public static int binlog(int bits) {
 	int log = 0;
 	if ((bits & 0xffff0000) != 0) {
 	    bits >>>= 16;

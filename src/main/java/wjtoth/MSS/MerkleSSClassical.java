@@ -3,6 +3,13 @@ package wjtoth.MSS;
 import hashing.HashFunction;
 import signatures.SignatureScheme;
 
+/**
+ * An implementation of the original tree traversal algorithm given by Merkle in
+ * his PhD dissertation.
+ * 
+ * @author wjtoth
+ *
+ */
 public class MerkleSSClassical extends MerkleSS {
 
     public MerkleSSClassical(HashFunction hashFunction, SignatureScheme signatureScheme, int height) {
