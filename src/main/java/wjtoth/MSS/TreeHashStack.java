@@ -39,6 +39,25 @@ public class TreeHashStack {
 	return this;
     }
 
+    public int low() {
+	if (this.stack.isEmpty()) {
+	    return this.maxheight;
+	}
+	if (this.stack.peek().getHeight() == this.maxheight) {
+	    return Integer.MAX_VALUE;
+	}
+	int minheight = Integer.MAX_VALUE;
+
+	// stacks stay relatively small so this is faster than maintaining
+	// minheight during each push pop operation
+	for (final MerkleNode merkleNode : this.stack) {
+	    if (merkleNode.getHeight() < minheight) {
+		minheight = merkleNode.getHeight();
+	    }
+	}
+	return minheight;
+    }
+
     private int newLeaf() {
 	this.stack.push(new MerkleNode(this.leafCalc.computeLeaf(this.leaf), 0));
 	if (this.stack.peek().getHeight() == this.maxheight) {

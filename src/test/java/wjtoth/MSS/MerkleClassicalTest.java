@@ -16,9 +16,9 @@ import signatures.SignatureScheme;
 import signatures.Signer;
 import signatures.Verifier;
 
-public class MerkleTest extends TestCase {
+public class MerkleClassicalTest extends TestCase {
     public static Test suite() {
-	return new TestSuite(MerkleTest.class);
+	return new TestSuite(MerkleClassicalTest.class);
     }
 
     /**
@@ -27,20 +27,21 @@ public class MerkleTest extends TestCase {
      * @param testName
      *            name of the test case
      */
-    public MerkleTest(String testName) {
+    public MerkleClassicalTest(String testName) {
 	super(testName);
     }
 
-    public void testMerkle() throws Exception {
+    public void testMerkleClassical() throws Exception {
 	final HashFunction hashFunction = new HashFunctionSha512();
 	final KeyGenerator keyGenerator = new KeyGeneratorLamport(hashFunction, hashFunction.getBitLength());
 	final Signer signer = new SignerLamport(hashFunction.getBitLength());
 	final Verifier verifier = new VerifierLamport(hashFunction, hashFunction.getBitLength());
 	final SignatureScheme signatureScheme = new SignatureScheme(keyGenerator, signer, verifier);
 
-	final MerkleSS merkleSS = new MerkleSSClassical(hashFunction, signatureScheme, 4);
+	final int HEIGHT = 10;
+	final MerkleSS merkleSS = new MerkleSSClassical(hashFunction, signatureScheme, HEIGHT);
 	final PublicKey publicKey = merkleSS.generatePublicKey();
-	for (int i = 0; i < (int) Math.pow(2, 4); ++i) {
+	for (int i = 0; i < (int) Math.pow(2, HEIGHT); ++i) {
 
 	    final Signature signature = merkleSS.sign("HelloWorld");
 
