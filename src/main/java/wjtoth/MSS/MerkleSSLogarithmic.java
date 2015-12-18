@@ -26,7 +26,7 @@ public class MerkleSSLogarithmic extends MerkleSS {
 
     private void refreshAuthNodes() {
 	for (int h = 0; h < this.height; ++h) {
-	    final int hPower = (int) Math.pow(2, h);
+	    final int hPower = IntMath.binpower(h);
 	    if (((this.leaf + 1) % hPower) == 0) {
 		this.auth[h] = this.stacks.get(h).top();
 		// TODO not sure about this

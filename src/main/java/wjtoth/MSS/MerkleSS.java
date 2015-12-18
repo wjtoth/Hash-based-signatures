@@ -44,7 +44,7 @@ public abstract class MerkleSS {
 	this.signatureScheme = signatureScheme;
 	this.height = height;
 	this.leaf = 0;
-	this.numberOfLeaves = (int) Math.pow(2, height);
+	this.numberOfLeaves = IntMath.binpower(height);
 	this.stacks = new ArrayList<TreeHashStack>(this.height);
 	this.leafOracle = new LeafOracle();
 	for (int i = 0; i < height; ++i) {
@@ -70,7 +70,7 @@ public abstract class MerkleSS {
 		final MerkleNode node2 = stack.pop();
 		final int h = node1.getHeight();
 		if (h > maxHeightReached) {
-		    this.stacks.get(h).initialize((int) Math.pow(2, h), h).push(node2);
+		    this.stacks.get(h).initialize(IntMath.binpower(h), h).push(node2);
 		    this.auth[h] = node1.getHash();
 		    ++maxHeightReached;
 		}

@@ -7,6 +7,7 @@ import hashing.Hash;
 import hashing.HashFunction;
 import signatures.KeyGenerator;
 import signatures.KeyPair;
+import wjtoth.MSS.IntMath;
 
 public class KeyGeneratorWinternitz implements KeyGenerator {
 
@@ -25,7 +26,7 @@ public class KeyGeneratorWinternitz implements KeyGenerator {
     }
 
     private int computeT(int k, int w, int kwratio) {
-	final double log = BitManipulations.binlog(kwratio);
+	final double log = IntMath.binlog(kwratio);
 	final double sum = Math.floor(log) + 1 + w;
 	return kwratio + (int) Math.ceil(sum / w);
     }
@@ -45,7 +46,7 @@ public class KeyGeneratorWinternitz implements KeyGenerator {
 	final SecureRandom secureRandom = new SecureRandom();
 	for (int i = 0; i < this.t; ++i) {
 	    x[i] = new BigInteger(this.k, secureRandom);
-	    y[i] = this.powerhash(x[i], this.h, (int) Math.pow(2, this.w) - 1);
+	    y[i] = this.powerhash(x[i], this.h, IntMath.binpower(this.w) - 1);
 	}
 	final Hash finalY = this.concatAllAndHash(y, this.h);
 	final PrivateKeyWinternitz privateKeyWinternitz = new PrivateKeyWinternitz(x);

@@ -38,7 +38,7 @@ public class VerifierMerkle implements Verifier {
 	final Hash[] auth = signatureMerkle.getAuth();
 	final int s = signatureMerkle.getIndex();
 	for (int i = 0; i < auth.length; ++i) {
-	    final int heightPow = (int) Math.pow(2, i);
+	    final int heightPow = IntMath.binpower(i);
 	    if (((s / heightPow) % 2) == 0) {
 		hash = this.h.hash(hash.concat(auth[i]));
 	    } else {

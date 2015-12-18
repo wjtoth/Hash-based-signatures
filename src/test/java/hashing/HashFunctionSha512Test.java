@@ -44,8 +44,5 @@ public class HashFunctionSha512Test extends TestCase {
 
 	// check that different hashes are not considered equal
 	Assert.assertFalse(h.hash(message1).equals(h.hash(message2)));
-
-	final char[] bits = org.apache.commons.codec.binary.BinaryCodec.toAsciiChars(h.hash(message).getData());
-	System.out.println(bits.length);
     }
 }

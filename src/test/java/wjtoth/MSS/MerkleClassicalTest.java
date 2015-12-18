@@ -38,10 +38,10 @@ public class MerkleClassicalTest extends TestCase {
 	final Verifier verifier = new VerifierLamport(hashFunction, hashFunction.getBitLength());
 	final SignatureScheme signatureScheme = new SignatureScheme(keyGenerator, signer, verifier);
 
-	final int HEIGHT = 10;
+	final int HEIGHT = 4;
 	final MerkleSS merkleSS = new MerkleSSClassical(hashFunction, signatureScheme, HEIGHT);
 	final PublicKey publicKey = merkleSS.generatePublicKey();
-	for (int i = 0; i < (int) Math.pow(2, HEIGHT); ++i) {
+	for (int i = 0; i < IntMath.binpower(HEIGHT); ++i) {
 
 	    final Signature signature = merkleSS.sign("HelloWorld");
 

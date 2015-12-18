@@ -10,6 +10,7 @@ import hashing.HashFunction;
 import signatures.PublicKey;
 import signatures.Signature;
 import signatures.Verifier;
+import wjtoth.MSS.IntMath;
 
 public class VerifierWinternitz implements Verifier {
 
@@ -29,7 +30,7 @@ public class VerifierWinternitz implements Verifier {
 
     private BigInteger computeCheckSum(BitSet[] b) {
 	BigInteger c = BigInteger.ZERO;
-	final long twoW = (long) Math.pow(2, this.w);
+	final long twoW = IntMath.binpower((long) this.w);
 	final BigInteger twoWBI = BigInteger.valueOf(twoW);
 	ArrayUtils.toString(b);
 	for (final BitSet element : b) {
@@ -47,7 +48,7 @@ public class VerifierWinternitz implements Verifier {
     }
 
     private int computeT(int k, int w, int kwratio) {
-	final double log = BitManipulations.binlog(kwratio);
+	final double log = IntMath.binlog(kwratio);
 	final double sum = Math.floor(log) + 1 + w;
 	return kwratio + (int) Math.ceil(sum / w);
     }
