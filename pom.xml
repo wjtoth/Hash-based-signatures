@@ -14,6 +14,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -30,6 +37,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.tantaman</groupId>
+			<artifactId>commons</artifactId>
+			<version>034dd7d20220f9e85ed6a1182f691c1ec9cc5453</version>
 		</dependency>
 	</dependencies>
 </project>

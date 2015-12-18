@@ -2,6 +2,13 @@ package hashing;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+/**
+ * The Hash class is used to represent the output of a HashFunction It contains
+ * some common operations algorithms need to do on hashes
+ *
+ * @author wjtoth
+ *
+ */
 public class Hash implements Hashable {
     private final byte[] data;
 

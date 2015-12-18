@@ -8,6 +8,12 @@ import signatures.PublicKey;
 import signatures.Signature;
 import signatures.Verifier;
 
+/**
+ * Verification algorithm for Lamport one time signatures
+ *
+ * @author wjtoth
+ *
+ */
 public class VerifierLamport implements Verifier {
 
     private final int k;

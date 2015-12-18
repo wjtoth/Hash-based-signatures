@@ -3,14 +3,11 @@ package ots;
 import java.math.BigInteger;
 import java.util.BitSet;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import hashing.Hash;
 import hashing.HashFunction;
 import signatures.PrivateKey;
 import signatures.Signature;
 import signatures.Signer;
-import wjtoth.MSS.IntMath;
 
 public class SignerWinternitz implements Signer {
 
@@ -25,43 +22,7 @@ public class SignerWinternitz implements Signer {
 	this.k = messageBitLength;
 	this.w = w;
 	this.kwratio = (int) Math.ceil((float) this.k / (float) w);
-	this.t = this.computeT(this.k, w, this.kwratio);
-    }
-
-    private BigInteger computeCheckSum(BitSet[] b) {
-	BigInteger c = BigInteger.ZERO;
-	final long twoW = IntMath.binpower((long) this.w);
-	final BigInteger twoWBI = BigInteger.valueOf(twoW);
-	ArrayUtils.toString(b);
-	for (final BitSet element : b) {
-	    // b may not be full when this is called
-	    if (element == null) {
-		break;
-	    }
-	    c = c.add(twoWBI);
-	    if (element.length() > 0) {
-		final BigInteger bBI = new BigInteger(element.toByteArray());
-		c = c.add(bBI);
-	    }
-	}
-	return c;
-    }
-
-    private int computeT(int k, int w, int kwratio) {
-	final double log = IntMath.binlog(kwratio);
-	final double sum = Math.floor(log) + 1 + w;
-	return kwratio + (int) Math.ceil(sum / w);
-    }
-
-    private Hash powerhash(BigInteger x, HashFunction h, int power) throws Exception {
-	if (power == 0) {
-	    return new Hash(x.toByteArray());
-	}
-	Hash hash = h.hash(x.toByteArray());
-	for (int i = 1; i < power; ++i) {
-	    hash = h.hash(hash);
-	}
-	return hash;
+	this.t = WinternitzCommons.computeT(this.k, w, this.kwratio);
     }
 
     @Override
@@ -80,7 +41,7 @@ public class SignerWinternitz implements Signer {
 	    b[i] = new BitSet(this.w);
 	    b[i].or(messageBits.get(i * this.w, Math.min((i + 1) * this.w, messageBits.size())));
 	}
-	final BigInteger c = this.computeCheckSum(b);
+	final BigInteger c = WinternitzCommons.computeCheckSum(b, this.w);
 	final BitSet cBinary = BitSet.valueOf(c.toByteArray());
 	for (int i = this.kwratio; i < this.t; ++i) {
 	    b[i] = new BitSet(this.w);
@@ -91,7 +52,7 @@ public class SignerWinternitz implements Signer {
 	final Hash[] sig = new Hash[this.t];
 	for (int i = 0; i < this.t; ++i) {
 	    final int bIntValue = b[i].length() > 0 ? new BigInteger(b[i].toByteArray()).intValue() : 0;
-	    sig[i] = this.powerhash(privateKeyWinternitz.getX(i), this.h, bIntValue);
+	    sig[i] = WinternitzCommons.powerhash(privateKeyWinternitz.getX(i), this.h, bIntValue);
 	}
 	return new SignatureWinternitz(sig);
     }

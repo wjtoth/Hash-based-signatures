@@ -1,5 +1,11 @@
 package hashing;
 
+/**
+ * A specific implementation of HashFunction using the common Sha512 algorithm
+ * 
+ * @author wjtoth
+ *
+ */
 public class HashFunctionSha512 extends HashFunction {
     public final int bitLength = 512;
 
