@@ -23,7 +23,7 @@ public class TreeHashStack {
     int leaf;
 
     HashFunction hashFunction;
-    LeafCalc leafCalc;
+    LeafOracle leafCalc;
 
     /**
      *
@@ -36,7 +36,7 @@ public class TreeHashStack {
      * @param leafCalc
      *            an oracle which computes leaf hash values
      */
-    public TreeHashStack(int start, int maxheight, HashFunction hashFunction, LeafCalc leafCalc) {
+    public TreeHashStack(int start, int maxheight, HashFunction hashFunction, LeafOracle leafCalc) {
 	this.hashFunction = hashFunction;
 	this.leafCalc = leafCalc;
 	this.stack = new Stack<MerkleNode>();
@@ -87,8 +87,8 @@ public class TreeHashStack {
 	return minheight;
     }
 
-    private int newLeaf() {
-	this.stack.push(new MerkleNode(this.leafCalc.computeLeaf(this.leaf), 0));
+    private int newLeaf() throws Exception {
+	this.stack.push(new MerkleNode(this.leafCalc.leafCalc(this.leaf), 0));
 	if (this.stack.peek().getHeight() == this.maxheight) {
 	    return 0;
 	}
@@ -96,7 +96,7 @@ public class TreeHashStack {
 	return 1;
     }
 
-    private int operate() {
+    private int operate() throws Exception {
 	if (this.stack.size() >= 2) {
 	    // top node of stack
 	    final MerkleNode stackRight = this.stack.pop();
@@ -123,7 +123,7 @@ public class TreeHashStack {
     }
 
     // runs n iterations of operate
-    public void update(int n) {
+    public void update(int n) throws Exception {
 	if ((this.stack.size() > 0) && (this.stack.peek().getHeight() == this.maxheight)) {
 	    return;
 	}

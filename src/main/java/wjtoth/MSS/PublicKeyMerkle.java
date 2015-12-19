@@ -6,7 +6,7 @@ import signatures.PublicKey;
 /**
  * Structure of Merkle Tree public key. Consists of the Hash value of the tree
  * root.
- * 
+ *
  * @author wjtoth
  *
  */
@@ -21,7 +21,6 @@ public class PublicKeyMerkle implements PublicKey {
 	return this.root;
     }
 
-    @Override
     public byte[] toByteArray() {
 	return this.root.getData();
     }

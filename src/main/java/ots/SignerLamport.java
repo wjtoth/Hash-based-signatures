@@ -9,7 +9,7 @@ import signatures.Signer;
 
 /**
  * Lamport signing algorithm
- * 
+ *
  * @author wjtoth
  *
  */
@@ -21,7 +21,6 @@ public class SignerLamport implements Signer {
 	this.k = messageBitLength;
     }
 
-    @Override
     public Signature sign(String message, PrivateKey privateKey) throws Exception {
 	if (!(privateKey instanceof PrivateKeyLamport)) {
 	    throw new Exception("Wrong Type of Signing Key");

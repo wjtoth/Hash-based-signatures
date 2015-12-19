@@ -8,7 +8,7 @@ import signatures.Signature;
 
 /**
  * Lamport signature structure. Consists of an array of integers.
- * 
+ *
  * @author wjtoth
  *
  */
@@ -28,7 +28,6 @@ public class SignatureLamport implements Signature {
 	return this.sig[i];
     }
 
-    @Override
     public byte[] toByteArray() {
 	byte[] data = this.sig[0].toByteArray();
 	for (int i = 1; i < this.sig.length; ++i) {

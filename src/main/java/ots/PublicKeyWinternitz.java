@@ -6,7 +6,7 @@ import signatures.PublicKey;
 /**
  * Winternitz Verification Key structure. Consists of a single Hash. Please note
  * that keys should only be used once.
- * 
+ *
  * @author wjtoth
  *
  */
@@ -22,7 +22,6 @@ public class PublicKeyWinternitz implements PublicKey {
 	return this.y;
     }
 
-    @Override
     public byte[] toByteArray() {
 	return this.y.getData();
     }

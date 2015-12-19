@@ -31,9 +31,5 @@ public class AppTest extends TestCase {
      */
     public void testApp() {
 	Assert.assertTrue(true);
-	final int i = 1;
-	for (int h = 0; h < 4; ++h) {
-	    System.out.println(i << h);
-	}
     }
 }

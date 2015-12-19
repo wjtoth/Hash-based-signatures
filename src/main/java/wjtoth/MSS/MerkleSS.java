@@ -5,11 +5,8 @@ import java.util.Stack;
 
 import hashing.Hash;
 import hashing.HashFunction;
-import signatures.KeyPair;
-import signatures.PrivateKey;
 import signatures.PublicKey;
 import signatures.Signature;
-import signatures.SignatureScheme;
 
 /**
  * Abstract class for Merkle Signature Scheme implementations. The abstract
@@ -21,38 +18,15 @@ import signatures.SignatureScheme;
  */
 public abstract class MerkleSS {
 
-    /**
-     * Use the appropriately indexed verification key to give a leaf hash value.
-     * The tree traversal will take this as its oracle.
-     *
-     * @author wjtoth
-     *
-     */
-    private class LeafOracle implements LeafCalc {
-
-	@Override
-	public Hash computeLeaf(int leaf) {
-	    return MerkleSS.this.hashFunction.hash(MerkleSS.this.verificationKeys[leaf]);
-	}
-
-    }
-
     private final HashFunction hashFunction;
-    private final SignatureScheme signatureScheme;
     protected final int height;
     protected int leaf;
     protected final int numberOfLeaves;
+    private final LeafOracle leafOracle;
 
     protected final ArrayList<TreeHashStack> stacks;
 
     protected final Hash[] auth;
-    // TODO figure out how to do this "online"
-    // should become clear once things are put together
-    private final PrivateKey[] signingKeys;
-
-    private final PublicKey[] verificationKeys;
-
-    private final LeafOracle leafOracle;
 
     /**
      *
@@ -64,20 +38,17 @@ public abstract class MerkleSS {
      *            the height of the merkle tree. 2^height messages can be signed
      *            with this scheme.
      */
-    public MerkleSS(HashFunction hashFunction, SignatureScheme signatureScheme, int height) {
+    public MerkleSS(HashFunction hashFunction, LeafOracle leafOracle, int height) {
 	this.hashFunction = hashFunction;
-	this.signatureScheme = signatureScheme;
 	this.height = height;
 	this.leaf = 0;
 	this.numberOfLeaves = IntMath.binpower(height);
+	this.leafOracle = leafOracle.setNumberOfLeaves(this.numberOfLeaves);
 	this.stacks = new ArrayList<TreeHashStack>(this.height);
-	this.leafOracle = new LeafOracle();
 	for (int i = 0; i < height; ++i) {
 	    this.stacks.add(new TreeHashStack(0, i, hashFunction, this.leafOracle));
 	}
 	this.auth = new Hash[height];
-	this.signingKeys = new PrivateKey[this.numberOfLeaves];
-	this.verificationKeys = new PublicKey[this.numberOfLeaves];
     }
 
     /**
@@ -86,19 +57,12 @@ public abstract class MerkleSS {
      * @throws Exception
      */
     public PublicKey generatePublicKey() throws Exception {
-	// OTS keys need to be initialized
-	for (int i = 0; i < this.numberOfLeaves; ++i) {
-	    final KeyPair keyPair = this.signatureScheme.generateKeys();
-	    this.signingKeys[i] = keyPair.getPrivateKey();
-	    this.verificationKeys[i] = keyPair.getPublicKey();
-	}
-
 	// A total treehash, no need to used incremental data structure since
 	// we're going straight to the root in one shot
 	final Stack<MerkleNode> stack = new Stack<MerkleNode>();
 	int maxHeightReached = -1;
 	for (int j = 0; j < this.numberOfLeaves; ++j) {
-	    MerkleNode node1 = new MerkleNode(this.leafOracle.computeLeaf(j), 0);
+	    MerkleNode node1 = new MerkleNode(this.leafOracle.leafCalc(j), 0);
 	    while (!stack.empty() && (stack.peek().getHeight() == node1.getHeight())) {
 		final MerkleNode node2 = stack.pop();
 		final int h = node1.getHeight();
@@ -119,6 +83,14 @@ public abstract class MerkleSS {
 
     /**
      *
+     * @return a VerifierMerkle to be used with signatures from this tree
+     */
+    public VerifierMerkle getVerifier() {
+	return new VerifierMerkle(this.hashFunction, this.leafOracle.getVerifier());
+    }
+
+    /**
+     *
      * @param message
      *            String value of message to be signed
      * @return returns a SignatureMerkle (see class for structure)
@@ -130,14 +102,14 @@ public abstract class MerkleSS {
 	if (this.leaf >= this.numberOfLeaves) {
 	    throw new Exception("out of signing leaves");
 	}
-	final Signature sig1 = this.signatureScheme.sign(message, this.signingKeys[this.leaf]);
+	final Signature sig1 = this.leafOracle.getSigner().sign(message, this.leafOracle.getSigningKey(this.leaf));
 	// copies auth path hashes since they will be changed before returning
 	// signature
 	final Hash[] a = new Hash[this.height];
 	for (int i = 0; i < this.height; ++i) {
 	    a[i] = new Hash(this.auth[i].getData());
 	}
-	final Signature sig = new SignatureMerkle(sig1, this.verificationKeys[this.leaf], a, this.leaf);
+	final Signature sig = new SignatureMerkle(sig1, this.leafOracle.getVerificationKey(this.leaf), a, this.leaf);
 
 	// calling traverseTree after running out of leaves may cause
 	// IndexOutOfBoundsException so best to not do that
@@ -153,6 +125,8 @@ public abstract class MerkleSS {
     /**
      * traverseTree precomputes the next auth path which will be needed for
      * signing
+     * 
+     * @throws Exception
      */
-    protected abstract void traverseTree();
+    protected abstract void traverseTree() throws Exception;
 }

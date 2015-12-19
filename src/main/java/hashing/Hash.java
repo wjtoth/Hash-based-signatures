@@ -36,7 +36,6 @@ public class Hash implements Hashable {
 	return this.data;
     }
 
-    @Override
     public byte[] toByteArray() {
 	return this.getData();
     }

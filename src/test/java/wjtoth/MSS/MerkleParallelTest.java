@@ -37,9 +37,11 @@ public class MerkleParallelTest extends TestCase {
 	final Signer signer = new SignerLamport(hashFunction.getBitLength());
 	final Verifier verifier = new VerifierLamport(hashFunction, hashFunction.getBitLength());
 	final SignatureScheme signatureScheme = new SignatureScheme(keyGenerator, signer, verifier);
+	final LeafOracle leafOracle = new LeafOracleOTS(hashFunction, signatureScheme);
 
 	final int HEIGHT = 4;
-	final MerkleSS merkleSS = new MerkleSSParallel(hashFunction, signatureScheme, HEIGHT);
+	final MerkleSS merkleSS = new MerkleSSParallel(hashFunction, leafOracle, HEIGHT);
+
 	final PublicKey publicKey = merkleSS.generatePublicKey();
 	for (int i = 0; i < IntMath.binpower(HEIGHT); ++i) {
 

@@ -1,22 +1,21 @@
 package wjtoth.MSS;
 
 import hashing.HashFunction;
-import signatures.SignatureScheme;
 
 /**
  * An implementation of the original tree traversal algorithm given by Merkle in
  * his PhD dissertation.
- * 
+ *
  * @author wjtoth
  *
  */
 public class MerkleSSClassical extends MerkleSS {
 
-    public MerkleSSClassical(HashFunction hashFunction, SignatureScheme signatureScheme, int height) {
-	super(hashFunction, signatureScheme, height);
+    public MerkleSSClassical(HashFunction hashFunction, LeafOracle leafOracle, int height) {
+	super(hashFunction, leafOracle, height);
     }
 
-    private void buildStacks() {
+    private void buildStacks() throws Exception {
 	for (int h = 0; h < this.height; ++h) {
 	    this.stacks.get(h).update(2);
 	}
@@ -27,7 +26,6 @@ public class MerkleSSClassical extends MerkleSS {
 	    final int hPower = IntMath.binpower(h);
 	    if (((this.leaf + 1) % hPower) == 0) {
 		this.auth[h] = this.stacks.get(h).top();
-		// TODO not sure about this
 		final int startnode = (((this.leaf + 1) + hPower) ^ hPower) % this.numberOfLeaves;
 		this.stacks.get(h).initialize(startnode, h);
 	    }
@@ -35,7 +33,7 @@ public class MerkleSSClassical extends MerkleSS {
     }
 
     @Override
-    protected void traverseTree() {
+    protected void traverseTree() throws Exception {
 	this.refreshAuthNodes();
 	this.buildStacks();
 	++this.leaf;

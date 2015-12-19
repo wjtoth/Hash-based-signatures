@@ -11,7 +11,7 @@ import signatures.Signer;
 
 /**
  * Signing algorithm for Winternitz signatures.
- * 
+ *
  * @author wjtoth
  *
  */
@@ -38,7 +38,6 @@ public class SignerWinternitz implements Signer {
 	this.t = WinternitzCommons.computeT(this.k, w, this.kwratio);
     }
 
-    @Override
     public Signature sign(String message, PrivateKey privateKey) throws Exception {
 	if (!(privateKey instanceof PrivateKeyWinternitz)) {
 	    throw new Exception("Wrong Type of Signing Key");

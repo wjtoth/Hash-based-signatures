@@ -23,6 +23,14 @@ public class SignatureScheme {
 	return this.keyGenerator.generateKeys();
     }
 
+    public Signer getSigner() {
+	return this.signer;
+    }
+
+    public Verifier getVerifier() {
+	return this.verifier;
+    }
+
     public Signature sign(String message, PrivateKey privateKey) throws Exception {
 	return this.signer.sign(message, privateKey);
     }

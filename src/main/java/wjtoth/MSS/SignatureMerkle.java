@@ -58,7 +58,6 @@ public class SignatureMerkle implements Signature {
 	return this.verificationKey;
     }
 
-    @Override
     public byte[] toByteArray() {
 	byte[] data = this.sig1.toByteArray();
 	data = ArrayUtils.addAll(data, this.verificationKey.toByteArray());

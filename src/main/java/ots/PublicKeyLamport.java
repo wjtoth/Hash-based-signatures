@@ -8,7 +8,7 @@ import signatures.PublicKey;
 /**
  * Lamport Verification Key structure. Consists of two arrays of hashes. Please
  * note that Keys should only be used with a single message.
- * 
+ *
  * @author wjtoth
  *
  */
@@ -25,7 +25,6 @@ public class PublicKeyLamport implements PublicKey {
 	return this.y1;
     }
 
-    // TODO bounds check
     public Hash getY1(int i) {
 	return this.y1[i];
     }
@@ -34,12 +33,10 @@ public class PublicKeyLamport implements PublicKey {
 	return this.y2;
     }
 
-    // TODO bounds check
     public Hash getY2(int i) {
 	return this.y2[i];
     }
 
-    @Override
     public byte[] toByteArray() {
 	byte[] data = this.y1[0].getData();
 	for (int i = 1; i < this.y1.length; ++i) {

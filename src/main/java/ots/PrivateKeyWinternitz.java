@@ -29,7 +29,6 @@ public class PrivateKeyWinternitz implements PrivateKey {
 	return this.x[i];
     }
 
-    @Override
     public byte[] toByteArray() {
 	byte[] data = this.x[0].toByteArray();
 	for (int i = 1; i < this.x.length; ++i) {

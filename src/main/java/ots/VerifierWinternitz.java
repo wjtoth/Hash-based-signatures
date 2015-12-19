@@ -38,7 +38,6 @@ public class VerifierWinternitz implements Verifier {
 	this.t = WinternitzCommons.computeT(this.k, w, this.kwratio);
     }
 
-    @Override
     public boolean verify(String message, Signature signature, PublicKey publicKey) throws Exception {
 	if (!(publicKey instanceof PublicKeyWinternitz)) {
 	    throw new Exception("Wrong Type of Signing Key");

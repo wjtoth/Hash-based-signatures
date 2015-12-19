@@ -1,19 +1,18 @@
 package wjtoth.MSS;
 
 import hashing.HashFunction;
-import signatures.SignatureScheme;
 
 /**
  * An implemenation of the tree traversal algorithm given by Szydlo is
  * "Merkle tree traversal in log space and time"
- * 
+ *
  * @author wjtoth
  *
  */
 public class MerkleSSLogarithmic extends MerkleSS {
 
-    public MerkleSSLogarithmic(HashFunction hashFunction, SignatureScheme signatureScheme, int height) {
-	super(hashFunction, signatureScheme, height);
+    public MerkleSSLogarithmic(HashFunction hashFunction, LeafOracle leafOracle, int height) {
+	super(hashFunction, leafOracle, height);
     }
 
     private void buildStacks() {
@@ -27,7 +26,11 @@ public class MerkleSSLogarithmic extends MerkleSS {
 		    focus = h;
 		}
 	    }
-	    this.stacks.get(focus).update(1);
+	    try {
+		this.stacks.get(focus).update(1);
+	    } catch (final Exception e) {
+		e.printStackTrace();
+	    }
 	}
     }
 
@@ -36,7 +39,6 @@ public class MerkleSSLogarithmic extends MerkleSS {
 	    final int hPower = IntMath.binpower(h);
 	    if (((this.leaf + 1) % hPower) == 0) {
 		this.auth[h] = this.stacks.get(h).top();
-		// TODO not sure about this
 		final int startnode = (((this.leaf + 1) + hPower) ^ hPower) % this.numberOfLeaves;
 		this.stacks.get(h).initialize(startnode, h);
 	    }

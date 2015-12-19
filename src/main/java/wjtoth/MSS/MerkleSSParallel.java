@@ -3,25 +3,26 @@ package wjtoth.MSS;
 import com.tantaman.commons.concurrent.Parallel;
 
 import hashing.HashFunction;
-import signatures.SignatureScheme;
 
 /**
  * A parallelized version of the MerkleSSClassical tree traversal.
- * 
+ *
  * @author wjtoth
  *
  */
 public class MerkleSSParallel extends MerkleSS {
-    public MerkleSSParallel(HashFunction hashFunction, SignatureScheme signatureScheme, int height) {
-	super(hashFunction, signatureScheme, height);
+    public MerkleSSParallel(HashFunction hashFunction, LeafOracle leafOracle, int height) {
+	super(hashFunction, leafOracle, height);
     }
 
     private void buildStacks() {
 	Parallel.blockingFor(this.stacks, new Parallel.Operation<TreeHashStack>() {
-
-	    @Override
 	    public void perform(final TreeHashStack param) {
-		param.update(2);
+		try {
+		    param.update(2);
+		} catch (final Exception e) {
+		    e.printStackTrace();
+		}
 	    };
 
 	});
@@ -29,7 +30,6 @@ public class MerkleSSParallel extends MerkleSS {
 
     private void refreshAuthNodes() {
 	Parallel.For(this.stacks, new Parallel.Operation<TreeHashStack>() {
-	    @Override
 	    public void perform(TreeHashStack param) {
 		final int h = param.maxheight;
 		final int hPower = IntMath.binpower(h);

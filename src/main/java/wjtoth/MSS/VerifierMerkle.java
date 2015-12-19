@@ -12,7 +12,7 @@ import signatures.Verifier;
  * authentication path of hashes provided to compute the merkle root (given as
  * the public key). It verifies that the root computed is as expected in order
  * to authenticate the message.
- * 
+ *
  * @author wjtoth
  *
  */
@@ -26,7 +26,6 @@ public class VerifierMerkle implements Verifier {
 	this.verifier = verifier;
     }
 
-    @Override
     public boolean verify(String message, Signature signature, PublicKey publicKey) throws Exception {
 	if (!(publicKey instanceof PublicKeyMerkle)) {
 	    throw new Exception("Wrong Type of Signing Key");

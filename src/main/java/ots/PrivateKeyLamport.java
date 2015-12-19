@@ -38,7 +38,6 @@ public class PrivateKeyLamport implements PrivateKey {
 	return this.x2[i];
     }
 
-    @Override
     public byte[] toByteArray() {
 	byte[] data = this.x1[0].toByteArray();
 	for (int i = 1; i < this.x1.length; ++i) {

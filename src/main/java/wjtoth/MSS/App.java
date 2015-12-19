@@ -1,11 +1,15 @@
 package wjtoth.MSS;
 
-import java.util.BitSet;
+import java.math.BigInteger;
 
+import hashing.Hash;
 import hashing.HashFunction;
 import hashing.HashFunctionSha512;
+import ots.KeyGeneratorLamport;
 import ots.KeyGeneratorWinternitz;
+import ots.SignerLamport;
 import ots.SignerWinternitz;
+import ots.VerifierLamport;
 import ots.VerifierWinternitz;
 import signatures.KeyGenerator;
 import signatures.PublicKey;
@@ -15,82 +19,64 @@ import signatures.Signer;
 import signatures.Verifier;
 
 /**
- * Main method. A quick story about Digital Signatures
+ * Main method. Some quick tests appear here.
  */
 public class App {
 
     public static void main(String[] args) throws Exception {
-	System.out.println("Merkle Tree Signing Demonstration:");
-	System.out.println("Suppose we have two friends Alice and Bob.");
-	System.out.println("Suppose we also have Eve who is jealous of Alice's friendship Bob.");
-	System.out.println("Eve is known for trying to impersonate Alice to talk to Bob.");
-	System.out
-		.println("It's beginning to be a problem for Alice and Bob who have very important messages to share.");
-	System.out.println(
-		"So Alice and Bob decide to use Digital Signatures to verify each other's identity while speaking.");
-	System.out.println(
-		"But they cannot chose any old Digital Signature Scheme, since they're afraid Eve has a Quantum Computer!");
-	System.out
-		.println("So they agree to use the Merkle Tree Signature Scheme with Winternitz One Time Signatures.");
-
-	System.out.println("\nAlice wants to send Bob a message. So Alice sets up her Merkle Tree.");
-	System.out
-		.println("They've already agreed leaves will be signed with Winternitz signatures with parameter w=2");
-	System.out.println("they've also decided to use Sha512 for hashing");
-
-	final HashFunction hashFunction = new HashFunctionSha512();
-	final int bitLength = 512;
+	System.out.println("Some Performance Tests on trees of height 12 using Sha512 for Hashing (times in ms):");
+	final int height = 12;
+	System.out.println("Using Winternitz Signatures with parameter w = 2:");
 	final int w = 2;
-	final KeyGenerator keyGenerator = new KeyGeneratorWinternitz(hashFunction, bitLength, w);
-	final Signer signer = new SignerWinternitz(hashFunction, hashFunction.getBitLength(), w);
-	final Verifier verifier = new VerifierWinternitz(hashFunction, hashFunction.getBitLength(), w);
+	final HashFunction hashFunction = new HashFunctionSha512();
+	final int messageBitLength = hashFunction.getBitLength();
+	final KeyGenerator keyGenerator = new KeyGeneratorWinternitz(hashFunction, messageBitLength, w);
+	final Signer signer = new SignerWinternitz(hashFunction, messageBitLength, w);
+	final Verifier verifier = new VerifierWinternitz(hashFunction, messageBitLength, w);
 	final SignatureScheme signatureScheme = new SignatureScheme(keyGenerator, signer, verifier);
+	final LeafOracle leafOracle = new LeafOracleOTS(hashFunction, signatureScheme);
+	System.out.println("\nThe Classical Tree Traversal");
+	App.testTree(hashFunction, leafOracle, new MerkleSSClassical(hashFunction, leafOracle, height));
+	System.out.println("\nThe Classical Tree Traversal in Parallel");
+	App.testTree(hashFunction, leafOracle, new MerkleSSParallel(hashFunction, leafOracle, height));
+	System.out.println("\nThe Logarithmic Tree Traversal");
+	App.testTree(hashFunction, leafOracle, new MerkleSSLogarithmic(hashFunction, leafOracle, height));
 
-	final int height = 4;
-	final MerkleSS aliceMerkleSS = new MerkleSSClassical(hashFunction, signatureScheme, height);
-
-	System.out.println("Alice then computes her public key and sends it to Bob");
-	final PublicKey publicKey = aliceMerkleSS.generatePublicKey();
-	System.out.println("Alice's Public Key: ");
-	App.printBits(publicKey.toByteArray());
-
-	System.out.println("Now Alice wants to send Bob the message 'I think you are great'.");
-	System.out.println("She signs the message with her Merkle Signature Scheme");
-	final String message = "I think you are great";
-	final Signature signature = aliceMerkleSS.sign(message);
-	System.out.println("Alice's message Signature:");
-	App.printBits(signature.toByteArray());
-
-	System.out.println("Alice gives her message and signature to Bob");
-	System.out.println("Bob constructs his Verifier for messages from Alice.");
-	final Verifier bobVerifier = new VerifierMerkle(hashFunction, verifier);
-	System.out.println("Bob uses the Verifier with Alice's public key to check that the message came from Alice.");
-	System.out.println("Verifier response:");
-	System.out.println(bobVerifier.verify(message, signature, publicKey));
-	System.out.println("Bob smiles :)");
-
-	System.out.println(
-		"Eve wants to ruin Bob's friendship with Alice so she attempts to impersonate Alice and give Bob the message 'I DONT think you are great'.");
-	final String messageEve = "I DONT think you are great";
-	System.out.println("Eve doesn't know how to compute the signature though.");
-	System.out.println("Her quantum computer is useless, there is no factoring or discrete logarithms involved.");
-	System.out.println("She tries to use a previous signature she found Alice give Bob");
-
-	System.out.println("Bob uses the Verifier with Alice's public key to check that the message came from Alice.");
-	System.out.println("Verifier response:");
-	System.out.println(bobVerifier.verify(messageEve, signature, publicKey));
-	System.out.println("Bob is glad Alice wouldn't say something so mean. Bob smiles :)");
+	System.out.println("\nThe Classical Tree Traversal using Lamport Signatures");
+	final KeyGenerator keyGeneratorL = new KeyGeneratorLamport(hashFunction, messageBitLength);
+	final Signer signerL = new SignerLamport(messageBitLength);
+	final Verifier verifierL = new VerifierLamport(hashFunction, messageBitLength);
+	final SignatureScheme signatureSchemeL = new SignatureScheme(keyGeneratorL, signerL, verifierL);
+	final LeafOracle leafOracleL = new LeafOracleOTS(hashFunction, signatureSchemeL);
+	App.testTree(hashFunction, leafOracleL, new MerkleSSClassical(hashFunction, leafOracleL, height));
     }
 
-    private static void printBits(byte[] data) {
-	final BitSet bitSet = BitSet.valueOf(data);
-	for (int i = 0; i < bitSet.size(); ++i) {
-	    if (bitSet.get(i)) {
-		System.out.print(1);
-	    } else {
-		System.out.print(0);
-	    }
-	}
-	System.out.println();
+    private static void testTree(HashFunction hashFunction, LeafOracle leafOracle, MerkleSS merkleSS) throws Exception {
+	System.out.println("Time to compute root");
+	long start = System.currentTimeMillis();
+	final PublicKey publicKey = merkleSS.generatePublicKey();
+	long finish = System.currentTimeMillis();
+	System.out.println(finish - start);
+	System.out.println("Time to sign a message (given message 'Hello')");
+	final String message = "Hello";
+	start = System.currentTimeMillis();
+	final Signature signature = merkleSS.sign(message);
+	finish = System.currentTimeMillis();
+	System.out.println(finish - start);
+	System.out.println("Time to verify the message as authentic");
+	final VerifierMerkle verifierMerkle = new VerifierMerkle(hashFunction, leafOracle.getVerifier());
+	start = System.currentTimeMillis();
+	boolean isAuthentic = verifierMerkle.verify(message, signature, publicKey);
+	finish = System.currentTimeMillis();
+	System.out.println(finish - start);
+	System.out.println("message found to be real: " + isAuthentic);
+	System.out.println("Attempting to verify a different message ('Bye') with the same signature");
+	isAuthentic = verifierMerkle.verify("Bye", signature, publicKey);
+	System.out.println("message found to be real: " + isAuthentic);
+	System.out.println("Attempting to verify original message ('Hello') with a different Public Key");
+	// odds of this colliding are astronomically low
+	final PublicKey badPublicKey = new PublicKeyMerkle(new Hash(BigInteger.TEN.toByteArray()));
+	isAuthentic = verifierMerkle.verify(message, signature, badPublicKey);
+	System.out.println("message found to be real: " + isAuthentic);
     }
 }

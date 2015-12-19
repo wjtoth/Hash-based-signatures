@@ -31,7 +31,6 @@ public class VerifierLamport implements Verifier {
 	this.h = hashFunction;
     }
 
-    @Override
     public boolean verify(String message, Signature signature, PublicKey publicKey) throws Exception {
 	if (!(publicKey instanceof PublicKeyLamport)) {
 	    throw new Exception("Wrong Type of Signing Key");

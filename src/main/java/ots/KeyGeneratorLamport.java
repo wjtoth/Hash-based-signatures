@@ -25,7 +25,6 @@ public class KeyGeneratorLamport implements KeyGenerator {
 	this.k = messageBitLength;
     }
 
-    @Override
     public KeyPair generateKeys() throws Exception {
 
 	final BigInteger[] x1 = new BigInteger[this.k];

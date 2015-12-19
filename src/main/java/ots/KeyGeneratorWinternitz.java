@@ -39,7 +39,6 @@ public class KeyGeneratorWinternitz implements KeyGenerator {
 	this.t = WinternitzCommons.computeT(this.k, w, this.kwratio);
     }
 
-    @Override
     public KeyPair generateKeys() throws Exception {
 	final BigInteger[] x = new BigInteger[this.t];
 	final Hash[] y = new Hash[this.t];
