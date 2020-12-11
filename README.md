@@ -19,7 +19,7 @@ This project provides a Java implementation of the Merkle Signature Scheme. The 
 
 We provide in the source two options for One Time Signature Schemes, the methods of Lamport and Winternitz. For Tree Traversal we provide both the Classical method of Merkle in a serial and parallel variation, as well as the faster Logarithmic method that came later. For hash functions we provide Sha512, but it is very simple to implement your favourite one if you want something different. In fact that is really where the power of this imlementation comes in. It should be quite clear from reading the source documentation how a user could write their own leaf signing oracle, or write a wrapper around their hash function of choice and just plug it into this scheme. To borrow another phrase from software design, the pieces of this scheme are loosely coupled and thus very suitable for having components swapped out. Another reason this is a good design choice is that the practical considerations of how to build Merkle Tree schemes have only come under consideration very recently, within the last decade or so, in coordination with interest in post-quantum cryptography, and so as new methods in these areas are developed it should be easy to code up an implemenation of them and plug it into the existing system implemented here.
 
-##Building and Usage
+## Building and Usage
 
 For usage of this software one can see the Test classes or Main method for examples, and read the documenting comments on each class. To build the software one needs JRE 7 and the application Maven. Navigate your command line to the directly containg pom.xml and run "mvn install" from there to build.
 
